@@ -92,9 +92,6 @@
     }
 
     function drawLeg(startX, startY, angle, length, legColor, isBackLeg) {
-      const legColor1 = getRandomColor(BodyColors)
-      const legColor2 = getRandomColor(BodyColors)
-      
       if (!isBackLeg) {
         // Front legs are triangles (arms)
         drawTriangle(startX, startY, length * 0.3, angle);
@@ -133,8 +130,6 @@
       ctx.fill();
       ctx.restore();
 
-      ctx.fillStyle = legColor1;
-
       // Draw lower leg (calf) - long oval
       ctx.save();
       ctx.translate(
@@ -172,7 +167,7 @@
       // Lower leg: 60 degree depression from horizontal in their respective direction
       // For left leg: 60 degrees down-right = -60 degrees from horizontal
       // For right leg: 60 degrees down-left = -120 degrees from horizontal (or 240 degrees)
-      const lowerAngle = isLeftLeg ? Math.PI * 4 / 9 : Math.PI * 8 / 9;
+      const lowerAngle = isLeftLeg ? Math.PI * 7 / 18 : Math.PI * 2 / 3;
       const footX = kneeX + Math.cos(lowerAngle) * lowerLegLength;
       const footY = kneeY + Math.sin(lowerAngle) * lowerLegLength;
 
