@@ -92,6 +92,9 @@
     }
 
     function drawLeg(startX, startY, angle, length, legColor, isBackLeg) {
+      const legColor1 = getRandomColor(BodyColors)
+      const legColor2 = getRandomColor(BodyColors)
+      
       if (!isBackLeg) {
         // Front legs are triangles (arms)
         drawTriangle(startX, startY, length * 0.3, angle);
@@ -130,6 +133,8 @@
       ctx.fill();
       ctx.restore();
 
+      ctx.fillStyle = legColor1;
+
       // Draw lower leg (calf) - long oval
       ctx.save();
       ctx.translate(
@@ -146,7 +151,7 @@
       ctx.save();
       ctx.translate(footX, footY);
       ctx.rotate(lowerLegAngle);
-      ctx.fillStyle = legColor;
+      ctx.fillStyle = legColor2;
       ctx.beginPath();
       ctx.ellipse(0, 0, length * 0.22, length * 0.15, 0, 0, Math.PI * 2);
       ctx.fill();
