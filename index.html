@@ -99,17 +99,17 @@
       }
 
       // Back legs: realistic with longer ovals that bend
-      const upperLegLength = length * 0.5;
-      const lowerLegLength = length * 0.5;
-      const upperLegWidth = length * 0.18;
-      const lowerLegWidth = length * 0.16;
+      const upperLegLength = length * 0.6;
+      const lowerLegLength = length * 0.6;
+      const upperLegWidth = length * 0.15;
+      const lowerLegWidth = length * 0.14;
 
       // Calculate knee position
       const kneeX = startX + Math.cos(angle) * upperLegLength;
       const kneeY = startY + Math.sin(angle) * upperLegLength;
 
       // Lower leg bends outward more dramatically for frog-like appearance
-      const bendAngle = isBackLeg ? 0.4 : 0.2;
+      const bendAngle = isBackLeg ? 0.5 : 0.2;
       const lowerLegAngle = angle + bendAngle;
       
       // End position (foot/ankle)
@@ -142,9 +142,68 @@
       ctx.fill();
       ctx.restore();
 
-      // Draw foot (small triangle)
-      const footSize = length * 0.25;
-      drawTriangle(footX, footY, footSize, lowerLegAngle + Math.PI / 2);
+      // Draw foot (elongated oval for webbed foot look)
+      ctx.save();
+      ctx.translate(footX, footY);
+      ctx.rotate(lowerLegAngle);
+      ctx.fillStyle = legColor;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, length * 0.22, length * 0.15, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSittingBackLeg(startX, startY, legLength, legColor, isLeftLeg) {
+      const upperLegLength = legLength * 0.65;
+      const lowerLegLength = legLength * 0.65;
+      const upperLegWidth = legLength * 0.15;
+      const lowerLegWidth = legLength * 0.14;
+
+      // Upper leg goes UP and to the side
+      const upperAngle = isLeftLeg ? -Math.PI / 2.5 : -Math.PI / 2.5 + 0.5;
+      const kneeX = startX + Math.cos(upperAngle) * upperLegLength;
+      const kneeY = startY + Math.sin(upperAngle) * upperLegLength;
+
+      // Lower leg goes DOWN (bent)
+      const lowerAngle = isLeftLeg ? Math.PI / 3.5 : Math.PI - Math.PI / 3.5;
+      const footX = kneeX + Math.cos(lowerAngle) * lowerLegLength;
+      const footY = kneeY + Math.sin(lowerAngle) * lowerLegLength;
+
+      ctx.fillStyle = legColor;
+
+      // Draw upper leg (thigh) - long oval going up
+      ctx.save();
+      ctx.translate(
+        startX + Math.cos(upperAngle) * upperLegLength * 0.5,
+        startY + Math.sin(upperAngle) * upperLegLength * 0.5
+      );
+      ctx.rotate(upperAngle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, upperLegLength * 0.5, upperLegWidth, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw lower leg (calf) - long oval going down
+      ctx.save();
+      ctx.translate(
+        kneeX + Math.cos(lowerAngle) * lowerLegLength * 0.5,
+        kneeY + Math.sin(lowerAngle) * lowerLegLength * 0.5
+      );
+      ctx.rotate(lowerAngle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, lowerLegLength * 0.5, lowerLegWidth, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw foot (elongated oval for webbed foot look)
+      ctx.save();
+      ctx.translate(footX, footY);
+      ctx.rotate(lowerAngle);
+      ctx.fillStyle = legColor;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, legLength * 0.22, legLength * 0.15, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
 
     function drawExpression(headY, headRadius, eyeX, eyeY, expressionType, bodyColor) {
@@ -363,18 +422,16 @@
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      // === BACK LEGS ===
-      const backLegLength = Math.random() * 40 + 70;
-      const backLegX = -bodyWidth * 0.65;
-      const backLegY = bodyHeight * 0.8;
-      const backLegAngle1 = Math.random() * 0.4 + 0.3;
+      // === BACK LEGS (SITTING POSITION) ===
+      const backLegLength = Math.random() * 50 + 90;
+      const backLegY = bodyHeight * 0.9;
       ctx.fillStyle = legColor;
-      drawLeg(backLegX, backLegY, Math.PI / 2 + backLegAngle1, backLegLength, legColor, true);
-
+      
+      // Left back leg
+      drawSittingBackLeg(-bodyWidth * 0.6, backLegY, backLegLength, legColor, true);
+      
       // Right back leg
-      const backLegX2 = bodyWidth * 0.65;
-      const backLegAngle2 = Math.random() * 0.4 + 0.3;
-      drawLeg(backLegX2, backLegY, Math.PI / 2 - backLegAngle2, backLegLength, legColor, true);
+      drawSittingBackLeg(bodyWidth * 0.6, backLegY, backLegLength, legColor, false);
 
       // === FRONT LEGS (ARMS - triangles) ===
       const frontLegLength = Math.random() * 30 + 40;
