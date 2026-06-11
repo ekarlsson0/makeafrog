@@ -160,12 +160,12 @@
       const lowerLegWidth = legLength * 0.14;
 
       // Upper leg goes UP and OUT to the side
-      const upperAngle = isLeftLeg ? -Math.pi * 0.75 : -Math.pi * 0.25;
+      const upperAngle = isLeftLeg ? -Math.PI / 2.2 - 0.35 : -Math.PI / 2.2 + 0.35;
       const kneeX = startX + Math.cos(upperAngle) * upperLegLength;
       const kneeY = startY + Math.sin(upperAngle) * upperLegLength;
 
       // Lower leg goes DOWN (bent downward)
-      const lowerAngle = isLeftLeg ? Math.PI / 3 : Math.PI * 2 / 3;
+      const lowerAngle = isLeftLeg ? Math.PI / 2 + 0.4 : Math.PI / 2 - 0.4;
       const footX = kneeX + Math.cos(lowerAngle) * lowerLegLength;
       const footY = kneeY + Math.sin(lowerAngle) * lowerLegLength;
 
