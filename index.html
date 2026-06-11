@@ -11,6 +11,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      gap: 20px;
     }
     canvas {
       display: block;
@@ -25,16 +27,26 @@
       font-family: Arial, sans-serif;
       display: none;
     }
+    #homeMessage {
+      color: #ffffff;
+      font-size: 36px;
+      font-weight: bold;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <canvas id="frogCanvas" width="700" height="500"></canvas>
   <div id="waitingMessage">Come back at 2:20</div>
+  <div id="homeMessage">It's 5 o clock, go home!</div>
 
   <script>
     const canvas = document.getElementById('frogCanvas');
     const ctx = canvas.getContext('2d');
     const waitingMessage = document.getElementById('waitingMessage');
+    const homeMessage = document.getElementById('homeMessage');
 
     const bodyColors = [
       '#2ecc71', '#27ae60', '#16a085', '#1abc9c', '#52be80',
@@ -57,8 +69,16 @@
       const hours = now.getHours();
       const minutes = now.getMinutes();
       
-      // Check if it's 2:20 AM (02:20) or 2:20 PM (14:20)
+      // Check if it's 5 AM (05:00) or 5 PM (17:00)
       return (hours === 5 && minutes === 0) || (hours === 17 && minutes === 0);
+    }
+
+    function isHomeTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      
+      // Check if it's 5 PM (17:00)
+      return hours === 17;
     }
 
     function drawTriangle(x, y, size, angle) {
@@ -130,7 +150,7 @@
       ctx.save();
       ctx.translate(footX, footY);
       ctx.rotate(lowerLegAngle);
-      ctx.fillStyle = legColor2;
+      ctx.fillStyle = legColor;
       ctx.beginPath();
       ctx.ellipse(0, 0, length * 0.22, length * 0.15, 0, 0, Math.PI * 2);
       ctx.fill();
@@ -362,7 +382,7 @@
       }
     }
 
-    function drawFrog() {
+    function drawFrog(drawText = false) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const centerX = canvas.width / 2;
@@ -451,28 +471,40 @@
       // === FACIAL EXPRESSION ===
       drawExpression(headY, headRadius, 0, eyeY, expressionType, bodyColor);
 
-      ctx.restore();
+      // === TEXT UNDER FROG (5 o'clock) ===
+      if (drawText) {
+        ctx.restore();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText("It's 5 o clock, go home!", centerX, centerY + 200);
+      } else {
+        ctx.restore();
+      }
     }
 
     function drawRandomFrog() {
-      drawFrog();
+      drawFrog(isHomeTime());
     }
 
     function showContent() {
       if (isAllowedTime()) {
         canvas.style.display = 'block';
         waitingMessage.style.display = 'none';
+        homeMessage.style.display = 'none';
         drawRandomFrog();
       } else {
         canvas.style.display = 'none';
         waitingMessage.style.display = 'block';
+        homeMessage.style.display = 'none';
       }
     }
 
     // Draw a random frog on page load and check time
     window.addEventListener('load', showContent);
 
-    // Check time every minute to update if it becomes 2:20
+    // Check time every minute to update if it becomes 5 o'clock
     setInterval(showContent, 60000);
   </script>
 </body>
