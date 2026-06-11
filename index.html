@@ -164,9 +164,10 @@
       const kneeX = startX + Math.cos(upperAngle) * upperLegLength;
       const kneeY = startY + Math.sin(upperAngle) * upperLegLength;
 
-      // Lower leg: 120 degree depression from horizontal in their respective direction
-      // 120 degree depression = -120 degrees from horizontal = going downward
-      const lowerAngle = isLeftLeg ? -Math.PI * 2 / 3 : -Math.PI / 3;
+      // Lower leg: 60 degree depression from horizontal in their respective direction
+      // For left leg: 60 degrees down-right = -60 degrees from horizontal
+      // For right leg: 60 degrees down-left = -120 degrees from horizontal (or 240 degrees)
+      const lowerAngle = isLeftLeg ? -Math.PI / 3 : -Math.PI * 2 / 3;
       const footX = kneeX + Math.cos(lowerAngle) * lowerLegLength;
       const footY = kneeY + Math.sin(lowerAngle) * lowerLegLength;
 
@@ -184,7 +185,7 @@
       ctx.fill();
       ctx.restore();
 
-      // Draw lower leg (calf) - long oval at 120 degree depression
+      // Draw lower leg (calf) - long oval at 60 degree depression
       ctx.save();
       ctx.translate(
         kneeX + Math.cos(lowerAngle) * lowerLegLength * 0.5,
@@ -196,7 +197,7 @@
       ctx.fill();
       ctx.restore();
 
-      // Draw foot as a triangle pointing downward
+      // Draw foot as a triangle pointing in the direction of the lower leg
       ctx.fillStyle = legColor;
       drawTriangle(footX, footY, legLength * 0.22, lowerAngle);
     }
