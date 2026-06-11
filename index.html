@@ -92,45 +92,59 @@
     }
 
     function drawLeg(startX, startY, angle, length, legColor, isBackLeg) {
-      // Draw leg with two ovals (thigh and calf) and a triangle foot
-      const thighLength = length * 0.4;
-      const calfLength = length * 0.35;
-      const thighWidth = length * 0.15;
-      const calfWidth = length * 0.12;
-      const footSize = length * 0.2;
+      if (!isBackLeg) {
+        // Front legs are triangles (arms)
+        drawTriangle(startX, startY, length * 0.3, angle);
+        return;
+      }
 
-      // Calculate positions along the leg
-      const kneeX = startX + Math.cos(angle) * thighLength;
-      const kneeY = startY + Math.sin(angle) * thighLength;
+      // Back legs: realistic with longer ovals that bend
+      const upperLegLength = length * 0.5;
+      const lowerLegLength = length * 0.5;
+      const upperLegWidth = length * 0.18;
+      const lowerLegWidth = length * 0.16;
 
-      // Add bend to the leg (calf bends slightly outward)
-      const kneeBend = isBackLeg ? 0.3 : -0.2;
-      const calfAngle = angle + kneeBend;
-      const footX = kneeX + Math.cos(calfAngle) * calfLength;
-      const footY = kneeY + Math.sin(calfAngle) * calfLength;
+      // Calculate knee position
+      const kneeX = startX + Math.cos(angle) * upperLegLength;
+      const kneeY = startY + Math.sin(angle) * upperLegLength;
+
+      // Lower leg bends outward more dramatically for frog-like appearance
+      const bendAngle = isBackLeg ? 0.4 : 0.2;
+      const lowerLegAngle = angle + bendAngle;
+      
+      // End position (foot/ankle)
+      const footX = kneeX + Math.cos(lowerLegAngle) * lowerLegLength;
+      const footY = kneeY + Math.sin(lowerLegAngle) * lowerLegLength;
 
       ctx.fillStyle = legColor;
 
-      // Draw thigh (oval)
+      // Draw upper leg (thigh) - long oval
       ctx.save();
-      ctx.translate(startX + Math.cos(angle) * thighLength * 0.5, startY + Math.sin(angle) * thighLength * 0.5);
+      ctx.translate(
+        startX + Math.cos(angle) * upperLegLength * 0.5,
+        startY + Math.sin(angle) * upperLegLength * 0.5
+      );
       ctx.rotate(angle);
       ctx.beginPath();
-      ctx.ellipse(0, 0, thighLength * 0.5, thighWidth, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, upperLegLength * 0.5, upperLegWidth, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // Draw calf (oval)
+      // Draw lower leg (calf) - long oval
       ctx.save();
-      ctx.translate(kneeX + Math.cos(calfAngle) * calfLength * 0.5, kneeY + Math.sin(calfAngle) * calfLength * 0.5);
-      ctx.rotate(calfAngle);
+      ctx.translate(
+        kneeX + Math.cos(lowerLegAngle) * lowerLegLength * 0.5,
+        kneeY + Math.sin(lowerLegAngle) * lowerLegLength * 0.5
+      );
+      ctx.rotate(lowerLegAngle);
       ctx.beginPath();
-      ctx.ellipse(0, 0, calfLength * 0.5, calfWidth, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, lowerLegLength * 0.5, lowerLegWidth, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // Draw foot (triangle)
-      drawTriangle(footX, footY, footSize, calfAngle + Math.PI / 2);
+      // Draw foot (small triangle)
+      const footSize = length * 0.25;
+      drawTriangle(footX, footY, footSize, lowerLegAngle + Math.PI / 2);
     }
 
     function drawExpression(headY, headRadius, eyeX, eyeY, expressionType, bodyColor) {
@@ -362,11 +376,12 @@
       const backLegAngle2 = Math.random() * 0.4 + 0.3;
       drawLeg(backLegX2, backLegY, Math.PI / 2 - backLegAngle2, backLegLength, legColor, true);
 
-      // === FRONT LEGS ===
+      // === FRONT LEGS (ARMS - triangles) ===
       const frontLegLength = Math.random() * 30 + 40;
       const frontLegX = -bodyWidth * 0.7;
       const frontLegY = bodyHeight * 0.2;
       const frontLegAngle1 = Math.random() * 0.3 - 0.15;
+      ctx.fillStyle = legColor;
       drawLeg(frontLegX, frontLegY, -Math.PI / 2 + frontLegAngle1, frontLegLength, legColor, false);
 
       // Right front leg
