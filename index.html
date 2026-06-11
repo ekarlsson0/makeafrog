@@ -61,319 +61,180 @@
     const canvas = document.getElementById('frogCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Expanded color palette
     const bodyColors = [
       '#2ecc71', '#27ae60', '#16a085', '#1abc9c', '#3498db',
       '#8e44ad', '#c0392b', '#e67e22', '#f39c12', '#f1c40f',
-      '#52be80', '#1e8449', '#f39c12', '#d68910', '#7d3c98',
-      '#16a085', '#0b5345', '#6c3483', '#28b463', '#7cb342'
+      '#52be80', '#1e8449', '#d68910', '#7d3c98', '#28b463'
     ];
 
     function getRandomColor() {
       return bodyColors[Math.floor(Math.random() * bodyColors.length)];
     }
 
-    function getContrastColor(color) {
-      // Return a darker version for details
-      const factor = 0.6;
-      const c = parseInt(color.slice(1), 16);
-      const r = Math.floor((c >> 16) * factor);
-      const g = Math.floor(((c >> 8) & 0xff) * factor);
-      const b = Math.floor((c & 0xff) * factor);
-      return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+    function drawTriangle(x, y, size, angle) {
+      // Draw an equilateral triangle pointing in direction of angle
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(-size * 0.866, size * 0.5);
+      ctx.lineTo(size * 0.866, size * 0.5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
     }
 
     function drawFrog() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const frogX = canvas.width / 2;
-      const frogY = canvas.height / 2;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
 
-      // Randomize proportions drastically
-      const bodyScale = Math.random() * 0.7 + 0.5; // 0.5 - 1.2
-      const headScale = Math.random() * 0.8 + 0.6; // 0.6 - 1.4
-      const legLength = Math.random() * 80 + 60; // 60 - 140
-      const legThickness = Math.random() * 20 + 10; // 10 - 30
-
-      // Random rotation for the whole frog
-      const frogRotation = (Math.random() - 0.5) * 0.4; // -0.2 to 0.2 radians
+      // Random frog proportions
+      const bodyScale = Math.random() * 0.5 + 0.8; // 0.8 - 1.3
+      const headScale = Math.random() * 0.4 + 0.8; // 0.8 - 1.2
+      
+      // Body dimensions
+      const bodyWidth = 100 * bodyScale;
+      const bodyHeight = 130 * bodyScale;
+      
+      // Head dimensions
+      const headRadius = 50 * headScale;
+      
+      // Colors
+      const bodyColor = getRandomColor();
+      const bellyColor = getRandomColor();
+      const spotColor = getRandomColor();
 
       ctx.save();
-      ctx.translate(frogX, frogY);
-      ctx.rotate(frogRotation);
+      ctx.translate(centerX, centerY);
 
-      // Color scheme for this frog
-      const mainColor = getRandomColor();
-      const accentColor = getRandomColor();
-      const bellyColor = getRandomColor();
-      const detailColor = getContrastColor(mainColor);
-
-      // Draw body (main egg-shaped)
-      const bodyWidth = 120 * bodyScale;
-      const bodyHeight = 140 * bodyScale;
-      ctx.fillStyle = mainColor;
+      // === BODY ===
+      ctx.fillStyle = bodyColor;
       ctx.beginPath();
-      ctx.ellipse(0, 20, bodyWidth, bodyHeight, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 30, bodyWidth, bodyHeight, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Draw belly (front oval)
+      // === BELLY SPOT (big spot on stomach) ===
       ctx.fillStyle = bellyColor;
       ctx.globalAlpha = 0.8;
       ctx.beginPath();
-      ctx.ellipse(0, 30, bodyWidth * 0.6, bodyHeight * 0.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 35, bodyWidth * 0.5, bodyHeight * 0.45, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      // Draw back legs (positioned farther out and lower)
-      drawFrogLeg(
-        -bodyWidth * 0.6,
-        bodyHeight * 0.7,
-        legLength * 1.3,
-        legThickness * 1.2,
-        accentColor,
-        'back'
-      );
-      drawFrogLeg(
-        bodyWidth * 0.6,
-        bodyHeight * 0.7,
-        legLength * 1.3,
-        legThickness * 1.2,
-        accentColor,
-        'back'
-      );
+      // === BACK LEGS ===
+      // Left back leg
+      const backLegLength = Math.random() * 40 + 70;
+      const backLegX = -bodyWidth * 0.65;
+      const backLegY = bodyHeight * 0.8;
+      const backLegAngle1 = Math.random() * 0.4 + 0.3;
+      ctx.fillStyle = getRandomColor();
+      drawTriangle(backLegX, backLegY, backLegLength * 0.35, Math.PI / 2 + backLegAngle1);
 
-      // Draw front legs (positioned farther out)
-      drawFrogLeg(
-        -bodyWidth * 0.7,
-        bodyHeight * 0.2,
-        legLength * 0.8,
-        legThickness * 0.9,
-        accentColor,
-        'front'
-      );
-      drawFrogLeg(
-        bodyWidth * 0.7,
-        bodyHeight * 0.2,
-        legLength * 0.8,
-        legThickness * 0.9,
-        accentColor,
-        'front'
-      );
+      // Right back leg
+      const backLegX2 = bodyWidth * 0.65;
+      const backLegAngle2 = Math.random() * 0.4 + 0.3;
+      ctx.fillStyle = getRandomColor();
+      drawTriangle(backLegX2, backLegY, backLegLength * 0.35, Math.PI / 2 - backLegAngle2);
 
-      // Draw head
-      const headX = 0;
-      const headY = -bodyHeight * 0.8;
-      const headWidth = bodyWidth * headScale * 0.9;
-      const headHeight = bodyHeight * headScale * 0.8;
+      // === FRONT LEGS ===
+      // Left front leg
+      const frontLegLength = Math.random() * 30 + 40;
+      const frontLegX = -bodyWidth * 0.7;
+      const frontLegY = bodyHeight * 0.2;
+      const frontLegAngle1 = Math.random() * 0.3 - 0.15;
+      ctx.fillStyle = getRandomColor();
+      drawTriangle(frontLegX, frontLegY, frontLegLength * 0.3, -Math.PI / 2 + frontLegAngle1);
 
-      ctx.fillStyle = mainColor;
+      // Right front leg
+      const frontLegX2 = bodyWidth * 0.7;
+      const frontLegAngle2 = Math.random() * 0.3 - 0.15;
+      ctx.fillStyle = getRandomColor();
+      drawTriangle(frontLegX2, frontLegY, frontLegLength * 0.3, -Math.PI / 2 - frontLegAngle2);
+
+      // === HEAD ===
+      const headY = -bodyHeight * 0.6;
+      ctx.fillStyle = bodyColor;
       ctx.beginPath();
-      ctx.ellipse(headX, headY, headWidth, headHeight, 0, 0, Math.PI * 2);
+      ctx.arc(0, headY, headRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Random head rotation
-      const headTilt = (Math.random() - 0.5) * 0.3;
-      ctx.save();
-      ctx.translate(headX, headY);
-      ctx.rotate(headTilt);
+      // === BUMPS ON TOP OF HEAD (where eyes sit) ===
+      const bumpRadius = headRadius * 0.35;
+      const bumpDistance = headRadius * 0.5;
 
-      // Draw eyes (big, expressive, popping off the top of head)
-      const eyeDistance = headWidth * 0.35;
-      const eyeSize = Math.random() * 25 + 20; // 20 - 45
+      // Left bump
+      ctx.fillStyle = bodyColor;
+      ctx.beginPath();
+      ctx.arc(-bumpDistance, headY - headRadius * 0.4, bumpRadius, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Left eye - positioned at top, popping off
-      const leftEyeX = -eyeDistance;
-      const leftEyeY = -headHeight * 0.65;
-      drawEye(leftEyeX, leftEyeY, eyeSize, detailColor, mainColor);
+      // Right bump
+      ctx.beginPath();
+      ctx.arc(bumpDistance, headY - headRadius * 0.4, bumpRadius, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Right eye - positioned at top, popping off
-      const rightEyeX = eyeDistance;
-      const rightEyeY = -headHeight * 0.65 + (Math.random() - 0.5) * 10;
-      drawEye(rightEyeX, rightEyeY, eyeSize, detailColor, mainColor);
+      // === EYES (white circles on bumps with black pupils) ===
+      const eyeRadius = bumpRadius * 0.7;
+      const eyeY = headY - headRadius * 0.4;
 
-      ctx.restore();
+      // Left eye white
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(-bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Draw mouth (various expressions)
-      const mouthType = Math.floor(Math.random() * 4);
-      const mouthX = 0;
-      const mouthY = headY + headHeight * 0.3;
+      // Left eye pupil (random position within eye for life-like look)
+      ctx.fillStyle = '#000000';
+      const leftPupilX = -bumpDistance + (Math.random() - 0.5) * eyeRadius * 0.4;
+      const leftPupilY = eyeY + (Math.random() - 0.5) * eyeRadius * 0.4;
+      const pupilRadius = eyeRadius * 0.5;
+      ctx.beginPath();
+      ctx.arc(leftPupilX, leftPupilY, pupilRadius, 0, Math.PI * 2);
+      ctx.fill();
 
-      ctx.strokeStyle = detailColor;
-      ctx.lineWidth = 3;
+      // Right eye white
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Right eye pupil
+      ctx.fillStyle = '#000000';
+      const rightPupilX = bumpDistance + (Math.random() - 0.5) * eyeRadius * 0.4;
+      const rightPupilY = eyeY + (Math.random() - 0.5) * eyeRadius * 0.4;
+      ctx.beginPath();
+      ctx.arc(rightPupilX, rightPupilY, pupilRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // === MOUTH ===
+      const mouthType = Math.floor(Math.random() * 3);
+      const mouthY = headY + headRadius * 0.3;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
       ctx.lineCap = 'round';
 
       if (mouthType === 0) {
         // Happy smile
         ctx.beginPath();
-        ctx.arc(mouthX, mouthY, 25, 0, Math.PI, false);
+        ctx.arc(0, mouthY, 15, 0, Math.PI, false);
         ctx.stroke();
       } else if (mouthType === 1) {
         // Straight line
         ctx.beginPath();
-        ctx.moveTo(mouthX - 20, mouthY);
-        ctx.lineTo(mouthX + 20, mouthY);
-        ctx.stroke();
-      } else if (mouthType === 2) {
-        // O shape
-        ctx.beginPath();
-        ctx.arc(mouthX, mouthY, 15, 0, Math.PI * 2);
+        ctx.moveTo(-15, mouthY);
+        ctx.lineTo(15, mouthY);
         ctx.stroke();
       } else {
-        // Smirk
+        // Surprised O
         ctx.beginPath();
-        ctx.arc(mouthX, mouthY, 20, 0.2, Math.PI - 0.2, false);
+        ctx.arc(0, mouthY, 10, 0, Math.PI * 2);
         ctx.stroke();
-      }
-
-      // Random spots/warts
-      const spotCount = Math.floor(Math.random() * 6) + 2;
-      ctx.fillStyle = detailColor;
-      ctx.globalAlpha = 0.5;
-      for (let i = 0; i < spotCount; i++) {
-        const spotX = (Math.random() - 0.5) * bodyWidth * 1.5;
-        const spotY = (Math.random() - 0.5) * bodyHeight * 1.2;
-        const spotSize = Math.random() * 15 + 5;
-        ctx.beginPath();
-        ctx.arc(spotX, spotY, spotSize, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      // Random bumps on back
-      ctx.fillStyle = getRandomColor();
-      ctx.globalAlpha = 0.7;
-      const bumpCount = Math.floor(Math.random() * 8) + 3;
-      for (let i = 0; i < bumpCount; i++) {
-        const bumpX = (Math.random() - 0.5) * bodyWidth * 1.4;
-        const bumpY = (Math.random() - 0.5) * bodyHeight * 0.9 - bodyHeight * 0.3;
-        const bumpSize = Math.random() * 10 + 4;
-        ctx.beginPath();
-        ctx.arc(bumpX, bumpY, bumpSize, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      ctx.restore();
-    }
-
-    function drawFrogLeg(startX, startY, length, thickness, color, legType) {
-      ctx.save();
-      ctx.translate(startX, startY);
-
-      if (legType === 'back') {
-        // Back legs have more realistic bending (crouched position)
-        const bendAngle = Math.random() * 0.6 + 0.4; // More pronounced bend
-        const thighLength = length * 0.5;
-        const calfLength = length * 0.4;
-
-        // Thigh segment (upper leg)
-        ctx.fillStyle = color;
-        ctx.fillRect(-thickness / 2, 0, thickness, thighLength);
-
-        // Bend at knee
-        ctx.translate(0, thighLength);
-        ctx.rotate(bendAngle);
-
-        // Calf segment (lower leg) - webbed foot
-        ctx.fillStyle = getRandomColor();
-        ctx.fillRect(-thickness / 2, 0, thickness * 0.8, calfLength);
-
-        // Webbed foot at the end
-        ctx.translate(0, calfLength);
-        const footSize = thickness * 2;
-        ctx.fillStyle = getRandomColor();
-        ctx.beginPath();
-        ctx.ellipse(0, 0, footSize * 1.5, footSize, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Toes with webbing
-        const toeCount = 5;
-        const toeColor = getContrastColor(color);
-        ctx.fillStyle = toeColor;
-        for (let i = 0; i < toeCount; i++) {
-          const toeAngle = (i / (toeCount - 1)) * Math.PI - Math.PI / 2;
-          const toeX = Math.cos(toeAngle) * footSize * 1.3;
-          const toeY = Math.sin(toeAngle) * footSize * 0.8;
-          ctx.beginPath();
-          ctx.arc(toeX, toeY, footSize * 0.35, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else {
-        // Front legs - slightly bent for a more natural posture
-        const bendAngle = Math.random() * 0.3 + 0.1;
-        const segmentLength = length * 0.5;
-
-        // Upper arm
-        ctx.fillStyle = color;
-        ctx.fillRect(-thickness / 2, 0, thickness, segmentLength);
-
-        // Bend at elbow
-        ctx.translate(0, segmentLength);
-        ctx.rotate(bendAngle);
-
-        // Forearm
-        ctx.fillStyle = getRandomColor();
-        ctx.fillRect(-thickness / 2, 0, thickness * 0.7, segmentLength);
-
-        // Hand/foot
-        ctx.translate(0, segmentLength);
-        const footSize = thickness * 1.2;
-        ctx.fillStyle = getRandomColor();
-        ctx.beginPath();
-        ctx.ellipse(0, 0, footSize, footSize * 0.7, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Toes
-        const toeCount = 4;
-        const toeColor = getContrastColor(color);
-        ctx.fillStyle = toeColor;
-        for (let i = 0; i < toeCount; i++) {
-          const toeX = -footSize * 0.5 + (i * footSize * 0.35);
-          const toeY = footSize * 0.4;
-          ctx.beginPath();
-          ctx.arc(toeX, toeY, footSize * 0.25, 0, Math.PI * 2);
-          ctx.fill();
-        }
       }
 
       ctx.restore();
-    }
-
-    function drawEye(x, y, size, pupilColor, whiteColor) {
-      // Eye white
-      ctx.fillStyle = whiteColor;
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Eye bulge (3D effect)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      ctx.beginPath();
-      ctx.arc(x - size * 0.3, y - size * 0.3, size * 0.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Pupil
-      const pupilX = x + (Math.random() - 0.5) * size * 0.3;
-      const pupilY = y + (Math.random() - 0.5) * size * 0.3;
-      const pupilSize = size * 0.5;
-
-      ctx.fillStyle = pupilColor;
-      ctx.beginPath();
-      ctx.arc(pupilX, pupilY, pupilSize, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Eye shine
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(pupilX - pupilSize * 0.4, pupilY - pupilSize * 0.4, pupilSize * 0.4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Eye outline
-      ctx.strokeStyle = pupilColor;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.stroke();
     }
 
     function drawRandomFrog() {
