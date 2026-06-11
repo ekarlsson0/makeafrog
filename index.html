@@ -62,13 +62,19 @@
     const ctx = canvas.getContext('2d');
 
     const bodyColors = [
-      '#2ecc71', '#27ae60', '#16a085', '#1abc9c', '#3498db',
-      '#8e44ad', '#c0392b', '#e67e22', '#f39c12', '#f1c40f',
-      '#52be80', '#1e8449', '#d68910', '#7d3c98', '#28b463'
+      '#2ecc71', '#27ae60', '#16a085', '#1abc9c', '#52be80',
+      '#1e8449', '#28b463', '#17a589', '#0e6251', '#229954',
+      '#239b56', '#186a3b', '#145a32', '#0b5345', '#1d5f3f',
+      '#3d9970', '#52c996', '#45b393'
     ];
 
-    function getRandomColor() {
-      return bodyColors[Math.floor(Math.random() * bodyColors.length)];
+    const bellyColors = [
+      '#a9dfbf', '#b5e7a0', '#abebc6', '#c8e6c9', '#b2dfdb',
+      '#80c788', '#99d695', '#90ee90', '#98d98e', '#9cd89e'
+    ];
+
+    function getRandomColor(colorArray) {
+      return colorArray[Math.floor(Math.random() * colorArray.length)];
     }
 
     function drawTriangle(x, y, size, angle) {
@@ -83,6 +89,208 @@
       ctx.closePath();
       ctx.fill();
       ctx.restore();
+    }
+
+    function drawExpression(headY, headRadius, bumpDistance, expressionType) {
+      const eyeRadius = headRadius * 0.25;
+      const eyeY = headY - headRadius * 0.4;
+      const pupilRadius = eyeRadius * 0.5;
+
+      if (expressionType === 0) {
+        // Happy expression
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Happy smile
+        const mouthY = headY + headRadius * 0.3;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, mouthY, 15, 0, Math.PI, false);
+        ctx.stroke();
+
+      } else if (expressionType === 1) {
+        // Surprised/Shocked expression
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY - 5, eyeRadius * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY - 5, pupilRadius * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY - 5, eyeRadius * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY - 5, pupilRadius * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Surprised O mouth
+        const mouthY = headY + headRadius * 0.3;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, mouthY, 12, 0, Math.PI * 2);
+        ctx.stroke();
+
+      } else if (expressionType === 2) {
+        // Sleepy/Tired expression
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(-bumpDistance, eyeY, eyeRadius, eyeRadius * 0.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY, pupilRadius * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(bumpDistance, eyeY, eyeRadius, eyeRadius * 0.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY, pupilRadius * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sleepy line mouth
+        const mouthY = headY + headRadius * 0.3;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-12, mouthY);
+        ctx.lineTo(12, mouthY);
+        ctx.stroke();
+
+      } else if (expressionType === 3) {
+        // Angry/Grumpy expression
+        // Eyes slanted down
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY - 3, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance - 2, eyeY - 3, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY - 3, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance + 2, eyeY - 3, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Angry eyebrows
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-bumpDistance - 12, eyeY - 12);
+        ctx.lineTo(-bumpDistance + 12, eyeY - 8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(bumpDistance - 12, eyeY - 8);
+        ctx.lineTo(bumpDistance + 12, eyeY - 12);
+        ctx.stroke();
+
+        // Frown
+        const mouthY = headY + headRadius * 0.3;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, mouthY + 5, 15, Math.PI, 0, false);
+        ctx.stroke();
+
+      } else if (expressionType === 4) {
+        // Winking expression
+        // Left eye winking (closed)
+        ctx.fillStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#000000';
+        ctx.beginPath();
+        ctx.moveTo(-bumpDistance - 10, eyeY);
+        ctx.lineTo(-bumpDistance + 10, eyeY);
+        ctx.stroke();
+
+        // Right eye open
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance + (Math.random() - 0.5) * 4, eyeY, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Playful smile
+        const mouthY = headY + headRadius * 0.3;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, mouthY, 12, 0, Math.PI, false);
+        ctx.stroke();
+
+      } else if (expressionType === 5) {
+        // Confused expression
+        // Left eye looking left
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(-bumpDistance - 4, eyeY, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Right eye looking right
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(bumpDistance + 4, eyeY, pupilRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Question mark mouth
+        const mouthY = headY + headRadius * 0.35;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, mouthY - 8, 6, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-2, mouthY);
+        ctx.lineTo(2, mouthY);
+        ctx.stroke();
+      }
     }
 
     function drawFrog() {
@@ -103,9 +311,10 @@
       const headRadius = 50 * headScale;
       
       // Colors
-      const bodyColor = getRandomColor();
-      const bellyColor = getRandomColor();
-      const spotColor = getRandomColor();
+      const bodyColor = getRandomColor(bodyColors);
+      const bellyColor = getRandomColor(bellyColors);
+      const legColor = getRandomColor(bodyColors);
+      const expressionType = Math.floor(Math.random() * 6);
 
       ctx.save();
       ctx.translate(centerX, centerY);
@@ -130,13 +339,13 @@
       const backLegX = -bodyWidth * 0.65;
       const backLegY = bodyHeight * 0.8;
       const backLegAngle1 = Math.random() * 0.4 + 0.3;
-      ctx.fillStyle = getRandomColor();
+      ctx.fillStyle = legColor;
       drawTriangle(backLegX, backLegY, backLegLength * 0.35, Math.PI / 2 + backLegAngle1);
 
       // Right back leg
       const backLegX2 = bodyWidth * 0.65;
       const backLegAngle2 = Math.random() * 0.4 + 0.3;
-      ctx.fillStyle = getRandomColor();
+      ctx.fillStyle = legColor;
       drawTriangle(backLegX2, backLegY, backLegLength * 0.35, Math.PI / 2 - backLegAngle2);
 
       // === FRONT LEGS ===
@@ -145,13 +354,13 @@
       const frontLegX = -bodyWidth * 0.7;
       const frontLegY = bodyHeight * 0.2;
       const frontLegAngle1 = Math.random() * 0.3 - 0.15;
-      ctx.fillStyle = getRandomColor();
+      ctx.fillStyle = legColor;
       drawTriangle(frontLegX, frontLegY, frontLegLength * 0.3, -Math.PI / 2 + frontLegAngle1);
 
       // Right front leg
       const frontLegX2 = bodyWidth * 0.7;
       const frontLegAngle2 = Math.random() * 0.3 - 0.15;
-      ctx.fillStyle = getRandomColor();
+      ctx.fillStyle = legColor;
       drawTriangle(frontLegX2, frontLegY, frontLegLength * 0.3, -Math.PI / 2 - frontLegAngle2);
 
       // === HEAD ===
@@ -176,63 +385,8 @@
       ctx.arc(bumpDistance, headY - headRadius * 0.4, bumpRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // === EYES (white circles on bumps with black pupils) ===
-      const eyeRadius = bumpRadius * 0.7;
-      const eyeY = headY - headRadius * 0.4;
-
-      // Left eye white
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(-bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Left eye pupil (random position within eye for life-like look)
-      ctx.fillStyle = '#000000';
-      const leftPupilX = -bumpDistance + (Math.random() - 0.5) * eyeRadius * 0.4;
-      const leftPupilY = eyeY + (Math.random() - 0.5) * eyeRadius * 0.4;
-      const pupilRadius = eyeRadius * 0.5;
-      ctx.beginPath();
-      ctx.arc(leftPupilX, leftPupilY, pupilRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Right eye white
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(bumpDistance, eyeY, eyeRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Right eye pupil
-      ctx.fillStyle = '#000000';
-      const rightPupilX = bumpDistance + (Math.random() - 0.5) * eyeRadius * 0.4;
-      const rightPupilY = eyeY + (Math.random() - 0.5) * eyeRadius * 0.4;
-      ctx.beginPath();
-      ctx.arc(rightPupilX, rightPupilY, pupilRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // === MOUTH ===
-      const mouthType = Math.floor(Math.random() * 3);
-      const mouthY = headY + headRadius * 0.3;
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-
-      if (mouthType === 0) {
-        // Happy smile
-        ctx.beginPath();
-        ctx.arc(0, mouthY, 15, 0, Math.PI, false);
-        ctx.stroke();
-      } else if (mouthType === 1) {
-        // Straight line
-        ctx.beginPath();
-        ctx.moveTo(-15, mouthY);
-        ctx.lineTo(15, mouthY);
-        ctx.stroke();
-      } else {
-        // Surprised O
-        ctx.beginPath();
-        ctx.arc(0, mouthY, 10, 0, Math.PI * 2);
-        ctx.stroke();
-      }
+      // === FACIAL EXPRESSION ===
+      drawExpression(headY, headRadius, bumpDistance, expressionType);
 
       ctx.restore();
     }
