@@ -159,19 +159,19 @@
       const upperLegWidth = legLength * 0.15;
       const lowerLegWidth = legLength * 0.14;
 
-      // Upper leg goes UP and to the side
-      const upperAngle = isLeftLeg ? -Math.PI / 2.5 : -Math.PI / 2.5 + 0.5;
+      // Upper leg goes UP and OUT to the side
+      const upperAngle = isLeftLeg ? -Math.PI / 2.2 - 0.35 : -Math.PI / 2.2 + 0.35;
       const kneeX = startX + Math.cos(upperAngle) * upperLegLength;
       const kneeY = startY + Math.sin(upperAngle) * upperLegLength;
 
-      // Lower leg goes DOWN (bent)
-      const lowerAngle = isLeftLeg ? Math.PI / 3.5 : Math.PI - Math.PI / 3.5;
+      // Lower leg goes DOWN (bent downward)
+      const lowerAngle = isLeftLeg ? Math.PI / 2 + 0.4 : Math.PI / 2 - 0.4;
       const footX = kneeX + Math.cos(lowerAngle) * lowerLegLength;
       const footY = kneeY + Math.sin(lowerAngle) * lowerLegLength;
 
       ctx.fillStyle = legColor;
 
-      // Draw upper leg (thigh) - long oval going up
+      // Draw upper leg (thigh) - long oval going up and out
       ctx.save();
       ctx.translate(
         startX + Math.cos(upperAngle) * upperLegLength * 0.5,
@@ -195,15 +195,9 @@
       ctx.fill();
       ctx.restore();
 
-      // Draw foot (elongated oval for webbed foot look)
-      ctx.save();
-      ctx.translate(footX, footY);
-      ctx.rotate(lowerAngle);
+      // Draw foot as a triangle pointing downward
       ctx.fillStyle = legColor;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, legLength * 0.22, legLength * 0.15, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+      drawTriangle(footX, footY, legLength * 0.22, lowerAngle);
     }
 
     function drawExpression(headY, headRadius, eyeX, eyeY, expressionType, bodyColor) {
