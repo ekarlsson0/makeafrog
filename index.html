@@ -91,6 +91,48 @@
       ctx.restore();
     }
 
+    function drawLeg(startX, startY, angle, length, legColor, isBackLeg) {
+      // Draw leg with two ovals (thigh and calf) and a triangle foot
+      const thighLength = length * 0.4;
+      const calfLength = length * 0.35;
+      const thighWidth = length * 0.15;
+      const calfWidth = length * 0.12;
+      const footSize = length * 0.2;
+
+      // Calculate positions along the leg
+      const kneeX = startX + Math.cos(angle) * thighLength;
+      const kneeY = startY + Math.sin(angle) * thighLength;
+
+      // Add bend to the leg (calf bends slightly outward)
+      const kneeBend = isBackLeg ? 0.3 : -0.2;
+      const calfAngle = angle + kneeBend;
+      const footX = kneeX + Math.cos(calfAngle) * calfLength;
+      const footY = kneeY + Math.sin(calfAngle) * calfLength;
+
+      ctx.fillStyle = legColor;
+
+      // Draw thigh (oval)
+      ctx.save();
+      ctx.translate(startX + Math.cos(angle) * thighLength * 0.5, startY + Math.sin(angle) * thighLength * 0.5);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, thighLength * 0.5, thighWidth, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw calf (oval)
+      ctx.save();
+      ctx.translate(kneeX + Math.cos(calfAngle) * calfLength * 0.5, kneeY + Math.sin(calfAngle) * calfLength * 0.5);
+      ctx.rotate(calfAngle);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, calfLength * 0.5, calfWidth, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw foot (triangle)
+      drawTriangle(footX, footY, footSize, calfAngle + Math.PI / 2);
+    }
+
     function drawExpression(headY, headRadius, eyeX, eyeY, expressionType, bodyColor) {
       const eyeGlobeRadius = headRadius * 0.32;
       const pupilRadius = eyeGlobeRadius * 0.45;
@@ -308,34 +350,29 @@
       ctx.globalAlpha = 1;
 
       // === BACK LEGS ===
-      // Left back leg
       const backLegLength = Math.random() * 40 + 70;
       const backLegX = -bodyWidth * 0.65;
       const backLegY = bodyHeight * 0.8;
       const backLegAngle1 = Math.random() * 0.4 + 0.3;
       ctx.fillStyle = legColor;
-      drawTriangle(backLegX, backLegY, backLegLength * 0.35, Math.PI / 2 + backLegAngle1);
+      drawLeg(backLegX, backLegY, Math.PI / 2 + backLegAngle1, backLegLength, legColor, true);
 
       // Right back leg
       const backLegX2 = bodyWidth * 0.65;
       const backLegAngle2 = Math.random() * 0.4 + 0.3;
-      ctx.fillStyle = legColor;
-      drawTriangle(backLegX2, backLegY, backLegLength * 0.35, Math.PI / 2 - backLegAngle2);
+      drawLeg(backLegX2, backLegY, Math.PI / 2 - backLegAngle2, backLegLength, legColor, true);
 
       // === FRONT LEGS ===
-      // Left front leg
       const frontLegLength = Math.random() * 30 + 40;
       const frontLegX = -bodyWidth * 0.7;
       const frontLegY = bodyHeight * 0.2;
       const frontLegAngle1 = Math.random() * 0.3 - 0.15;
-      ctx.fillStyle = legColor;
-      drawTriangle(frontLegX, frontLegY, frontLegLength * 0.3, -Math.PI / 2 + frontLegAngle1);
+      drawLeg(frontLegX, frontLegY, -Math.PI / 2 + frontLegAngle1, frontLegLength, legColor, false);
 
       // Right front leg
       const frontLegX2 = bodyWidth * 0.7;
       const frontLegAngle2 = Math.random() * 0.3 - 0.15;
-      ctx.fillStyle = legColor;
-      drawTriangle(frontLegX2, frontLegY, frontLegLength * 0.3, -Math.PI / 2 - frontLegAngle2);
+      drawLeg(frontLegX2, frontLegY, -Math.PI / 2 - frontLegAngle2, frontLegLength, legColor, false);
 
       // === HEAD ===
       const headY = -bodyHeight * 0.6;
