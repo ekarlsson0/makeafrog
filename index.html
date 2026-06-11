@@ -17,14 +17,24 @@
       background: linear-gradient(to bottom, #87ceeb 0%, #b8e0d2 100%);
       border-radius: 10px;
     }
+    #waitingMessage {
+      color: #ffffff;
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <canvas id="frogCanvas" width="700" height="500"></canvas>
+  <div id="waitingMessage">Come back at 2:20</div>
 
   <script>
     const canvas = document.getElementById('frogCanvas');
     const ctx = canvas.getContext('2d');
+    const waitingMessage = document.getElementById('waitingMessage');
 
     const bodyColors = [
       '#2ecc71', '#27ae60', '#16a085', '#1abc9c', '#52be80',
@@ -40,6 +50,15 @@
 
     function getRandomColor(colorArray) {
       return colorArray[Math.floor(Math.random() * colorArray.length)];
+    }
+
+    function isAllowedTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      
+      // Check if it's 2:20 AM (02:20) or 2:20 PM (14:20)
+      return (hours === 2 && minutes === 20) || (hours === 14 && minutes === 20);
     }
 
     function drawTriangle(x, y, size, angle) {
@@ -439,8 +458,22 @@
       drawFrog();
     }
 
-    // Draw a random frog on page load
-    window.addEventListener('load', drawRandomFrog);
+    function showContent() {
+      if (isAllowedTime()) {
+        canvas.style.display = 'block';
+        waitingMessage.style.display = 'none';
+        drawRandomFrog();
+      } else {
+        canvas.style.display = 'none';
+        waitingMessage.style.display = 'block';
+      }
+    }
+
+    // Draw a random frog on page load and check time
+    window.addEventListener('load', showContent);
+
+    // Check time every minute to update if it becomes 2:20
+    setInterval(showContent, 60000);
   </script>
 </body>
 </html>
