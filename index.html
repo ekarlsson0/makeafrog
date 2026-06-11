@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make a Frog</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .frog {
+            font-size: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Make a Frog</h1>
+
+<div id="content"></div>
+
+<script>
+const now = new Date();
+
+if (now.getHours() === 11 && now.getMinutes() === 11) {
+    document.getElementById("content").innerHTML =
+        '<div class="frog">🐸</div><p>You made a frog.</p>';
+} else {
+    document.getElementById("content").innerHTML =
+        "<p>It is not time to make a frog.</p>";
+}
+</script>
+
+</body>
+</html>
